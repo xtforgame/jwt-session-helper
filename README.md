@@ -1,6 +1,6 @@
-# AzDevBase
+# JwtSessionHelper
 
-A general purpose seed project base
+jwt-session-helper
 
 Run `npm install`
 

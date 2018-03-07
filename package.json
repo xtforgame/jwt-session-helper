@@ -1,7 +1,7 @@
 {
-  "name": "az-dev-base",
-  "version": "1.0.0",
-  "description": "A general purpose seed project base",
+  "name": "jwt-session-helper",
+  "version": "0.1.0",
+  "description": "jwt-session-helper",
   "main": "dist/library/index.js",
   "repository": {
     "type": "git"
@@ -27,7 +27,10 @@
   "engines": {
     "node": ">=7.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "jsonwebtoken": "^8.2.0",
+    "uuid": "^3.2.1"
+  },
   "devDependencies": {
     "az-gulp-env-lite": "git+https://github.com/xtforgame/az-gulp-env-lite#v0.4.0",
     "babel-core": "^6.14.0",
