@@ -46,7 +46,8 @@ var JwtSessionHelper = (_temp = _class = function JwtSessionHelper(secret) {
   }
 
   privateData.set(this, {
-    secret: secret
+    signSecret: secret.private || secret,
+    verifySecret: secret.public || secret
   });
 
   this.options = {};
@@ -76,9 +77,9 @@ var JwtSessionHelper = (_temp = _class = function JwtSessionHelper(secret) {
 
   this.verify = function (token, options) {
     var _privateData$get = privateData.get(_this),
-        secret = _privateData$get.secret;
+        verifySecret = _privateData$get.verifySecret;
 
-    return _jsonwebtoken2.default.verify(token, secret, _extends({}, _this.options.verifyDefaults, options));
+    return _jsonwebtoken2.default.verify(token, verifySecret, _extends({}, _this.options.verifyDefaults, options));
   };
 
   this.sign = function (payload, _options) {
@@ -87,12 +88,12 @@ var JwtSessionHelper = (_temp = _class = function JwtSessionHelper(secret) {
     }
 
     var _privateData$get2 = privateData.get(_this),
-        secret = _privateData$get2.secret;
+        signSecret = _privateData$get2.signSecret;
 
     var options = _extends({}, _this.options.signDefaults, {
       jwtid: _uuid2.default.v4()
     }, options);
-    return _jsonwebtoken2.default.sign.apply(_jsonwebtoken2.default, [payload, secret, options].concat(args));
+    return _jsonwebtoken2.default.sign.apply(_jsonwebtoken2.default, [payload, signSecret, options].concat(args));
   };
 
   this.createSession = function (originalData, options) {

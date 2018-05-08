@@ -22,7 +22,8 @@ export default class JwtSessionHelper {
     }
 
     privateData.set(this, {
-      secret,
+      signSecret: secret.private || secret,
+      verifySecret: secret.public || secret,
     });
 
     this.options = {};
@@ -62,21 +63,21 @@ export default class JwtSessionHelper {
   };
 
   verify = (token, options) => {
-    let { secret } = privateData.get(this);
-    return jwt.verify(token, secret, {
+    let { verifySecret } = privateData.get(this);
+    return jwt.verify(token, verifySecret, {
       ...this.options.verifyDefaults,
       ...options,
     });
   };
 
   sign = (payload, _options, ...args) => {
-    const { secret } = privateData.get(this);
+    const { signSecret } = privateData.get(this);
     const options = {
       ...this.options.signDefaults,
       jwtid: uuid.v4(),
       ...options,
     };
-    return jwt.sign(payload, secret, options, ...args);
+    return jwt.sign(payload, signSecret, options, ...args);
   };
 
   createSession = (originalData, options, ...args) => {
