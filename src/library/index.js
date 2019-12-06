@@ -4,9 +4,10 @@ import jwt from 'jsonwebtoken';
 const privateData = new WeakMap();
 
 export class Session {
-  constructor(info, token) {
+  constructor(info, token, payload) {
     this.info = info;
     this.token = token;
+    this.payload = payload;
   }
 };
 
@@ -52,6 +53,9 @@ export default class JwtSessionHelper {
       ...options,
     };
 
+    this.issuer = this.options.signDefaults.issuer || 'localhost';
+    this.options.signDefaults.issuer = this.issuer;
+
     this.Session = Session;
   }
 
@@ -70,20 +74,19 @@ export default class JwtSessionHelper {
     });
   };
 
-  sign = (payload, _options, ...args) => {
+  sign = (payload, options, ...args) => {
     const { signSecret } = privateData.get(this);
-    const options = {
+    return jwt.sign(payload, signSecret, {
       ...this.options.signDefaults,
       jwtid: uuid.v4(),
       ...options,
-    };
-    return jwt.sign(payload, signSecret, options, ...args);
+    }, ...args);
   };
 
   createSession = (originalData, options, ...args) => {
     const payload = this.options.parsePayload(originalData);
     let info = this.options.exposeInfo(originalData, payload);
     info.token = this.sign(payload, options, ...args);
-    return new this.Session(info, info.token);
+    return new this.Session(info, info.token, payload);
   };
 }

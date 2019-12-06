@@ -23,11 +23,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var privateData = new WeakMap();
 
-var Session = exports.Session = function Session(info, token) {
+var Session = exports.Session = function Session(info, token, payload) {
   _classCallCheck(this, Session);
 
   this.info = info;
   this.token = token;
+  this.payload = payload;
 };
 
 ;
@@ -67,6 +68,9 @@ var JwtSessionHelper = (_temp = _class = function JwtSessionHelper(secret) {
 
   this.options.verifyDefaults = _extends({}, this.options.defaults, options.verifyDefaults, options);
 
+  this.issuer = this.options.signDefaults.issuer || 'localhost';
+  this.options.signDefaults.issuer = this.issuer;
+
   this.Session = Session;
 }, _initialiseProps = function _initialiseProps() {
   var _this = this;
@@ -82,7 +86,7 @@ var JwtSessionHelper = (_temp = _class = function JwtSessionHelper(secret) {
     return _jsonwebtoken2.default.verify(token, verifySecret, _extends({}, _this.options.verifyDefaults, options));
   };
 
-  this.sign = function (payload, _options) {
+  this.sign = function (payload, options) {
     for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
       args[_key - 2] = arguments[_key];
     }
@@ -90,10 +94,9 @@ var JwtSessionHelper = (_temp = _class = function JwtSessionHelper(secret) {
     var _privateData$get2 = privateData.get(_this),
         signSecret = _privateData$get2.signSecret;
 
-    var options = _extends({}, _this.options.signDefaults, {
+    return _jsonwebtoken2.default.sign.apply(_jsonwebtoken2.default, [payload, signSecret, _extends({}, _this.options.signDefaults, {
       jwtid: _uuid2.default.v4()
-    }, options);
-    return _jsonwebtoken2.default.sign.apply(_jsonwebtoken2.default, [payload, signSecret, options].concat(args));
+    }, options)].concat(args));
   };
 
   this.createSession = function (originalData, options) {
@@ -104,7 +107,7 @@ var JwtSessionHelper = (_temp = _class = function JwtSessionHelper(secret) {
     var payload = _this.options.parsePayload(originalData);
     var info = _this.options.exposeInfo(originalData, payload);
     info.token = _this.sign.apply(_this, [payload, options].concat(args));
-    return new _this.Session(info, info.token);
+    return new _this.Session(info, info.token, payload);
   };
 }, _temp);
 exports.default = JwtSessionHelper;
