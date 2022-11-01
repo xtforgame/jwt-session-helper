@@ -46,7 +46,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "mocha": "^3.0.2",
     "rimraf": "^2.5.4"
   },
